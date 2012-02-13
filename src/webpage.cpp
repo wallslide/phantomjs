@@ -378,6 +378,33 @@ bool WebPage::render(const QString &fileName)
     return buffer.save(fileName);
 }
 
+bool WebPage::renderFD(int outFd, const QString &fileType)
+{
+    if (m_mainFrame->contentsSize().isEmpty())
+        return false;
+
+    QFile file;
+    file.open(outFd, QIODevice::WriteOnly);
+    QDataStream out(&file);
+
+//    QFileInfo fileInfo(fileName);
+//    QDir dir;
+//    dir.mkpath(fileInfo.absolutePath());
+
+//    if (fileName.endsWith(".pdf", Qt::CaseInsensitive))
+//        return renderPdf(fileName);
+
+    QImage buffer = renderImage();
+//    if (fileName.toLower().endsWith(".gif")) {
+//        return exportGif(buffer, fileName);
+//    }
+
+//    return buffer.save(fileName);
+    bool result = buffer.save(&file, fileType.toLocal8Bit().data());
+    file.close();
+    return result;
+}
+
 QImage WebPage::renderImage()
 {
     QSize contentsSize = m_mainFrame->contentsSize();
